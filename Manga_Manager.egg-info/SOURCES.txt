@@ -1,0 +1,7 @@
+setup.py
+Manga_Manager.egg-info/PKG-INFO
+Manga_Manager.egg-info/SOURCES.txt
+Manga_Manager.egg-info/dependency_links.txt
+Manga_Manager.egg-info/entry_points.txt
+Manga_Manager.egg-info/requires.txt
+Manga_Manager.egg-info/top_level.txt
