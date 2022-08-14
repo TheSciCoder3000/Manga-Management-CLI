@@ -8,18 +8,7 @@ if sys.version_info < (3, 8):
 else:
     from typing import Literal
 
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
-
 colorama.init(autoreset=True)
-
-class DirectoryEventHandler(FileSystemEventHandler):
-    def on_any_event(self, event):
-        # color = Fore.RED if event.event_type == 'deleted' else Fore.GREEN if event.event_type == 'created' else Fore.LIGHTBLACK_EX
-        # print(f"{Style.DIM}{color}\r{event.event_type}: {event.src_path}")
-        # print('\n>>: ', end='')
-        pass
-
 
 class ItemDirectory:
     __path: str
@@ -87,16 +76,9 @@ class ItemDirectory:
         
 
 class StorageLocation(ItemDirectory):
-    __Observer: Observer
-
     def __init__(self, path: str, location: Literal['local', 'external']):
         print(f"Initializing {Fore.CYAN}{location}{Fore.RESET} storage at path {Fore.CYAN}{path}")
         super().__init__(path, location)
-
-        eventHandler = DirectoryEventHandler()
-        self.__Observer = Observer()
-        self.__Observer.schedule(eventHandler, path, recursive=True)
-        self.__Observer.start()
 
     def getMangaCount(self) -> str:
         mangaCount = sum([itemDir.count for itemDir in self.items])
@@ -107,7 +89,3 @@ class StorageLocation(ItemDirectory):
         activeSources = len([sources.path for sources in self.items if sources.count > 0])
         color = Fore.LIGHTGREEN_EX if activeSources < 5 else Fore.GREEN if activeSources < 10 else Fore.YELLOW if activeSources < 15 else Fore.RED
         return f"{color}{activeSources}{Fore.RESET}"
-
-    def stopObserver(self):
-        print(f"stopping observer for path {self.path}")
-        self.__Observer.stop()
