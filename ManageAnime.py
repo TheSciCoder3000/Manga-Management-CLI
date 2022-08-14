@@ -7,6 +7,16 @@ import click
 
 colorama.init(autoreset=True)
 
+def PathsExist(local, external):
+    if not os.path.exists(local): 
+        print(f"Local Path: {Fore.CYAN}{local}{Fore.RESET} {Fore.RED}[Does Not Exist]{Fore.RESET}")
+        return False
+    if not os.path.exists(external): 
+        print(f"External Path: {Fore.CYAN}{external}{Fore.RESET} {Fore.RED}[Does Not Exist]{Fore.RESET}")
+        return False
+
+    return True
+
 @click.command()
 @click.option("--local", "-L", required=False, default="C:/Users/drjjd/Documents/Manga")
 @click.option("--external", "-E", required=False, default='E:/Studf')
@@ -16,8 +26,7 @@ def ManageMain(local, external):
     print(f"\t{Style.BRIGHT}{Fore.GREEN}Anime Management System")
     print(f'{Fore.LIGHTCYAN_EX}=======================================\n\n')
 
-    if not os.path.exists(local): return print(f"Local Path: {Fore.CYAN}{local}{Fore.RESET} {Fore.RED}[Does Not Exist]{Fore.RESET}")
-    if not os.path.exists(external): return print(f"External Path: {Fore.CYAN}{external}{Fore.RESET} {Fore.RED}[Does Not Exist]{Fore.RESET}")
+    if not PathsExist(local, external): return
 
     # Initialize storage objects
     localStorage: StorageLocation = None
