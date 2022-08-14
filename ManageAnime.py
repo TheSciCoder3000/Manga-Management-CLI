@@ -7,26 +7,22 @@ import click
 
 colorama.init(autoreset=True)
 
-def PathsExist(local, external):
-    if not os.path.exists(local): 
-        print(f"Local Path: {Fore.CYAN}{local}{Fore.RESET} {Fore.RED}[Does Not Exist]{Fore.RESET}")
-        return False
-    if not os.path.exists(external): 
-        print(f"External Path: {Fore.CYAN}{external}{Fore.RESET} {Fore.RED}[Does Not Exist]{Fore.RESET}")
-        return False
+@click.group(invoke_without_command=True)
+@click.option("--local", "-L", type=click.Path(exists=True, file_okay=False), required=False, default="C:/Users/drjjd/Documents/Manga")
+@click.option("--external", "-E", type=click.Path(exists=True, file_okay=False), required=False, default='E:/Studf')
+@click.pass_context
+def ManageMain(ctx, local, external):
+    ctx.ensure_object(dict)
+    ctx.obj['localPath'] = local
+    ctx.obj['externalPath'] = external
 
-    return True
+    if ctx.invoked_subcommand is None: initial(local, external)
 
-@click.command()
-@click.option("--local", "-L", required=False, default="C:/Users/drjjd/Documents/Manga")
-@click.option("--external", "-E", required=False, default='E:/Studf')
 # Main function
-def ManageMain(local, external):
+def initial(local, external):
     print(f'{Fore.LIGHTCYAN_EX}=======================================')
     print(f"\t{Style.BRIGHT}{Fore.GREEN}Anime Management System")
     print(f'{Fore.LIGHTCYAN_EX}=======================================\n\n')
-
-    if not PathsExist(local, external): return
 
     # Initialize storage objects
     localStorage: StorageLocation = None
@@ -46,19 +42,17 @@ def ManageMain(local, external):
     # Attempt to initialize external storage 
     try:
         ExternalStorage = StorageLocation(external, 'external')
+        mangaCount = int(ExternalStorage.getMangaCount()[5:-5])
         print(f"Manga/Manhwa: {ExternalStorage.getMangaCount()} ")
         print(f"Total Size: {ExternalStorage.size}")
         print(f"Active Sources: {ExternalStorage.getNumberActiveSources()}")
+
+        if mangaCount > 0: print(f'\n{Fore.LIGHTBLACK_EX}You can transfer the {mangaCount} manga/manhwa to the local storage by using the command "tachi transfer"')
     except Exception as e:
         print(e)
         print(f"{Fore.RED}Error: external storage cannot be found")
     
     print('\n\n')
-
-    if ExternalStorage == None:
-        print(f"{Fore.LIGHTRED_EX}External Storage{Fore.RESET} cannot be found please check if it is connected")
-    elif localStorage == None:
-        print(f"{Fore.LIGHTRED_EX}Local Storage{Fore.RESET} cannot be found please check if path is correct")
 
 
     
